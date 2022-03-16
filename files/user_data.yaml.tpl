@@ -149,27 +149,27 @@ write_files:
     content: |
       ${indent(6, k8_client_private_key)}
   #Additional Certificates
-%{ for idx in range(additional_certificates) ~}
+%{ for idx, cert in additional_certificates ~}
   - path: /opt/additional-cas/ca${idx}.crt
     owner: root:root
     permissions: "0444"
     content: |
-      ${indent(6, additional_certificates[idx])}
+      ${indent(6, cert)}
 %{ endfor ~}
   - path: /opt/setup_additional_cas.sh
     owner: root:root
     permissions: "0444"
     content: |
       #!/bin/bash
-      
+
       if [ -d "/opt/additional-cas" ] 
       then
         for CA_FILE in /opt/additional-cas/ca*.crt; do
           cp $CA_FILE /usr/local/share/ca-certificates/;
           update-ca-certificates;
 
-          openssl x509 -in $CA_FILE -inform pem -out "${CA_FILE%.crt}.der" -outform der
-          keytool -noprompt -importcert -trustcacerts -cacerts -alias cqgc -storepass changeit -file "${CA_FILE%.crt}.der"
+          openssl x509 -in $CA_FILE -inform pem -out "$${CA_FILE%.crt}.der" -outform der
+          keytool -noprompt -importcert -trustcacerts -cacerts -alias cqgc -storepass changeit -file "$${CA_FILE%.crt}.der"
         done
       fi
   #Zeppelin systemd configuration
