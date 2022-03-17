@@ -249,7 +249,7 @@ write_files:
           update-ca-certificates;
 
           openssl x509 -in $CA_FILE -inform pem -out "$${CA_FILE%.crt}.der" -outform der
-          keytool -noprompt -importcert -trustcacerts -cacerts -alias "cqgc${i}" -storepass changeit -file "$${CA_FILE%.crt}.der"
+          keytool -noprompt -importcert -trustcacerts -cacerts -alias "cqgc$${i}" -storepass changeit -file "$${CA_FILE%.crt}.der"
           let "i+=1"
         done
       fi
