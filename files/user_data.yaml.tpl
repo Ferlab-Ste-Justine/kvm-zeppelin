@@ -243,12 +243,14 @@ write_files:
 
       if [ -d "/opt/additional-cas" ] 
       then
+        i=0
         for CA_FILE in /opt/additional-cas/ca*.crt; do
           cp $CA_FILE /usr/local/share/ca-certificates/;
           update-ca-certificates;
 
           openssl x509 -in $CA_FILE -inform pem -out "$${CA_FILE%.crt}.der" -outform der
-          keytool -noprompt -importcert -trustcacerts -cacerts -alias cqgc -storepass changeit -file "$${CA_FILE%.crt}.der"
+          keytool -noprompt -importcert -trustcacerts -cacerts -alias "cqgc${i}" -storepass changeit -file "$${CA_FILE%.crt}.der"
+          let "i+=1"
         done
       fi
   #Zeppelin systemd configuration
@@ -282,6 +284,7 @@ runcmd:
   - systemctl restart resolvconf.service
   - resolvconf -u
   #Add additional CAs
+  - chmod +x /opt/setup_additional_cas.sh
   - /opt/setup_additional_cas.sh
   #Install Spark
   - cd /opt
