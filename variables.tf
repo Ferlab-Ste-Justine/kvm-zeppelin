@@ -109,12 +109,6 @@ variable "zeppelin_mirror" {
   default = "https://mirror.csclub.uwaterloo.ca"
 }
 
-variable "spark_mirror" {
-  description = "Mirror from which to download spark"
-  type = string
-  default = "https://mirror.dsrg.utoronto.ca"
-}
-
 variable "k8_executor_image" {
   description = "Image to launch k8 executor from"
   type = string
@@ -180,4 +174,29 @@ variable "additional_certificates" {
   description = "Additional list of certificates to install on the system. Useful if your keycloak or s3 store having certificates signed by an internal CA for example."
   type = list(string)
   default = []
+}
+
+variable "keycloak_url" {
+  description = "Url of Keycloak server"
+  type = string
+}
+
+variable "keycloak_realm" {
+  description = "Name of Keycloak realm"
+  type = string
+}
+
+variable "keycloak_client_id" {
+  description = "Id of Keycloak client"
+  type = string
+}
+
+variable "keycloak_client_secret" {
+  description = "Secret of Keycloak client"
+  type = string
+}
+
+variable "zeppelin_url" {
+  description = "Url of zeppelin"
+  type = string
 }

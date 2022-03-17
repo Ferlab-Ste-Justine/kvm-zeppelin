@@ -118,7 +118,7 @@ write_files:
       spark.kubernetes.authenticate.caCertFile      /opt/k8/ca.crt
       spark.kubernetes.authenticate.clientCertFile  /opt/k8/k8.crt
       spark.kubernetes.authenticate.clientKeyFile   /opt/k8/k8.key
-      spark.jars.packages                           org.apache.hadoop:hadoop-aws:3.2.0,com.amazonaws:aws-java-sdk-bundle:1.11.375,io.delta:delta-core_2.12:0.7.0
+      spark.jars.packages                           org.apache.hadoop:hadoop-aws:3.3.1,com.amazonaws:aws-java-sdk-bundle:1.11.901,io.delta:delta-core_2.12:1.0.0
       SPARK_HOME                                    /opt/spark
       spark.hadoop.fs.s3a.impl                      org.apache.hadoop.fs.s3a.S3AFileSystem
       spark.hadoop.fs.s3a.fast.upload               true
@@ -132,6 +132,89 @@ write_files:
       spark.sql.catalogImplementation               hive
       spark.sql.extensions                          io.delta.sql.DeltaSparkSessionExtension
       spark.sql.catalog.spark_catalog               org.apache.spark.sql.delta.catalog.DeltaCatalog
+  #Shiro configuration
+  - path: /opt/shiro.ini
+    owner: root:root
+    permissions: "0400"
+    content: |
+      [main]
+      oidcConfig = org.pac4j.oidc.config.OidcConfiguration
+      oidcConfig.withState = false
+      oidcConfig.discoveryURI = ${keycloak_url}/auth/realms/${keycloak_realm}/.well-known/openid-configuration
+      oidcConfig.clientId = ${keycloak_client_id}
+      oidcConfig.secret = ${keycloak_client_secret}
+      oidcConfig.scope = openid profile email roles
+      oidcConfig.clientAuthenticationMethodAsString = client_secret_basic
+      oidcConfig.disablePkce = true
+
+      authorizationGenerator = bio.ferlab.pac4j.authorization.generator.KeycloakRolesAuthorizationGenerator
+      authorizationGenerator.clientId = zeppelin
+
+      ajaxRequestResolver = org.pac4j.core.http.ajax.DefaultAjaxRequestResolver
+      ajaxRequestResolver.addRedirectionUrlAsHeader = true
+
+      oidcClient = org.pac4j.oidc.client.OidcClient
+      oidcClient.configuration = $oidcConfig
+      oidcClient.ajaxRequestResolver = $ajaxRequestResolver
+      oidcClient.callbackUrl = ${zeppelin_url}/api/callback/
+      oidcClient.ajaxRequestResolver = $ajaxRequestResolver
+      oidcClient.authorizationGenerators = $authorizationGenerator
+
+      clients = org.pac4j.core.client.Clients
+      clients.clients = $oidcClient
+
+      pac4jRealm = io.buji.pac4j.realm.Pac4jRealm
+      pac4jRealm.principalNameAttribute = preferred_username
+      pac4jSubjectFactory = io.buji.pac4j.subject.Pac4jSubjectFactory
+
+      securityManager.subjectFactory = $pac4jSubjectFactory
+
+      roleAuthorizer = org.pac4j.core.authorization.authorizer.RequireAnyRoleAuthorizer
+      roleAuthorizer.elements = clin_administrator,clin_bioinformatician
+
+      config = org.pac4j.core.config.Config
+      config.clients = $clients
+      config.authorizers = role:$roleAuthorizer
+
+      oidcSecurityFilter = io.buji.pac4j.filter.SecurityFilter
+      oidcSecurityFilter.config = $config
+      oidcSecurityFilter.clients = oidcClient
+      oidcSecurityFilter.authorizers = +role
+
+      customCallbackLogic = bio.ferlab.pac4j.ForceDefaultURLCallbackLogic
+
+      callbackFilter = io.buji.pac4j.filter.CallbackFilter
+      callbackFilter.defaultUrl = ${zeppelin_url}
+      callbackFilter.config = $config
+      callbackFilter.callbackLogic = $customCallbackLogic
+
+      cookie = org.apache.shiro.web.servlet.SimpleCookie
+      callbackFilter.config = $config
+      callbackFilter.callbackLogic = $customCallbackLogic
+
+      cookie = org.apache.shiro.web.servlet.SimpleCookie
+      cookie.name = JSESSIONID
+      cookie.httpOnly = true
+      cookie.secure = true
+
+      sessionManager = org.apache.shiro.web.session.mgt.DefaultWebSessionManager
+      sessionManager.sessionIdCookie = $cookie
+
+      securityManager.sessionManager = $sessionManager
+      securityManager.sessionManager.globalSessionTimeout = 86400000
+
+      shiro.loginUrl = /api/login
+
+      [urls]
+      /api/version = anon
+      /api/interpreter/setting/restart/** = oidcSecurityFilter
+      /api/callback = callbackFilter
+      /api/cluster/** = oidcSecurityFilter
+      /api/notebook/**/permissions = oidcSecurityFilter
+      /api/interpreter/** = oidcSecurityFilter, roles[clin_administrator]
+      /api/configurations/** = oidcSecurityFilter, roles[clin_administrator]
+      /api/credential/** = oidcSecurityFilter, roles[clin_administrator]
+      /** = oidcSecurityFilter
   #Kubernetes Certificates
   - path: /opt/k8/ca.crt
     owner: root:root
@@ -194,7 +277,7 @@ packages:
   #DNS Dependency
   - resolvconf
   #Zeppelin/Spark Dependency
-  - openjdk-8-jre
+  - openjdk-11-jdk
 runcmd:
   #Add DNS Servers
   - systemctl start resolvconf.service
@@ -206,19 +289,23 @@ runcmd:
   - /opt/setup_additional_cas.sh
   #Install Spark
   - cd /opt
-  - wget ${spark_mirror}/apache/spark/spark-3.0.3/spark-3.0.3-bin-hadoop3.2.tgz
-  - tar xvzf spark-3.0.3-bin-hadoop3.2.tgz
-  - mv spark-3.0.3-bin-hadoop3.2 spark
-  - rm spark-3.0.3-bin-hadoop3.2.tgz
+  - wget https://github.com/Ferlab-Ste-Justine/spark-images/releases/download/v3.1.2/spark-3.1.2-bin-hadoop-3.3.1.tgz
+  - tar xzf spark-3.1.2-bin-hadoop-3.3.1.tgz
+  - mv spark-3.1.2-bin-hadoop-3.3.1 spark
+  - rm spark-3.1.2-bin-hadoop-3.3.1.tgz
   - cp /opt/spark-defaults.conf /opt/spark/conf/spark-defaults.conf
   #Install Zeppelin
   - cd /opt
-  - wget ${zeppelin_mirror}/apache/zeppelin/zeppelin-0.9.0/zeppelin-0.9.0-bin-netinst.tgz
-  - tar xvzf zeppelin-0.9.0-bin-netinst.tgz
-  - mv zeppelin-0.9.0-bin-netinst zeppelin
-  - rm zeppelin-0.9.0-bin-netinst.tgz
+  - wget ${zeppelin_mirror}/apache/zeppelin/zeppelin-0.10.0/zeppelin-0.10.0-bin-netinst.tgz
+  - tar xvzf zeppelin-0.10.0-bin-netinst.tgz
+  - mv zeppelin-0.10.0-bin-netinst zeppelin
+  - rm zeppelin-0.10.0-bin-netinst.tgz
+  - wget https://github.com/Ferlab-Ste-Justine/zeppelin-oidc/releases/download/v0.1.0/zeppelin-oidc-jar-with-dependencies.jar
+  - rm -rf /opt/zeppelin/lib/*
+  - mv zeppelin-oidc-jar-with-dependencies.jar /opt/zeppelin/lib/
   - cp /opt/zeppelin-env.sh /opt/zeppelin/conf/zeppelin-env.sh
   - cp /opt/zeppelin-site.xml /opt/zeppelin/conf/zeppelin-site.xml
+  - cp /opt/shiro.ini /opt/zeppelin/conf/shiro.ini
   - systemctl enable zeppelin
   - systemctl start zeppelin
   #Install prometheus node exporter as a binary managed as a systemd service

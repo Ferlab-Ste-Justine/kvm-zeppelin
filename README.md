@@ -9,6 +9,7 @@ The zeppelin server provisioned has the following characteristics:
 - It uses spark 3 in scala
 - It saves its notebooks in s3
 - It expects to communicate with a group of kubernetes workers to access the hive metastore and it expects its client traffic to originate from the kubernetes cluster's workers (probably via an ingress solution)
+- It uses keycloak for user authentication
 
 # Motivation
 
@@ -39,7 +40,6 @@ So instead, we made the tradeof of having a saner zeppelin deployment that runs 
 - **ssh_admin_public_key**: Public part of the ssh key the admin will be able to login as
 - **nameserver_ips**: Ips of nameservers that will be added to the list of nameservers the zeppelin server refers to to resolve domain names.
 - **zeppelin_mirror**: Mirror to download zeppelin from. Defaults to the university of Waterloo.
-- **spark_mirror**: Mirror to download spark from. Defaults to the university of Toronto.
 - **k8_executor_image**: Image to use to launch executor containers in kubernetes. Defaults to **chusj/spark:7508c20ef44952f1ee2af91a26822b6efc10998f**
 - **k8_api_endpoint**: Kubernetes api endpoint that zeppelin will use to provision executors on kubernetes.
 - **k8_ca_certificate**: Kubernetes ca certificate that zeppelin will use to authentify the api server.
@@ -52,6 +52,11 @@ So instead, we made the tradeof of having a saner zeppelin deployment that runs 
 - **hive_metastore_url**: Url of the hive metastore that zeppelin will use.
 - **spark_sql_warehouse_dir**: S3 path of the spark sql warehouse
 - **notebook_s3_bucket**: S3 bucket under which zeppelin will store its notebooks
+- **keycloak_url**: Url of Keycloak server
+- **keycloak_realm**: Name of Keycloak realm
+- **keycloak_client_id**: Id of Keycloak client
+- **keycloak_client_secret**: Secret of Keycloak client
+- **zeppelin_url**: Url used to access zeppelin
 
 # Usage Example
 
