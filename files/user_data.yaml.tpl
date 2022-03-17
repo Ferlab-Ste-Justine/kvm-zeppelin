@@ -189,10 +189,6 @@ write_files:
       callbackFilter.callbackLogic = $customCallbackLogic
 
       cookie = org.apache.shiro.web.servlet.SimpleCookie
-      callbackFilter.config = $config
-      callbackFilter.callbackLogic = $customCallbackLogic
-
-      cookie = org.apache.shiro.web.servlet.SimpleCookie
       cookie.name = JSESSIONID
       cookie.httpOnly = true
       cookie.secure = true
