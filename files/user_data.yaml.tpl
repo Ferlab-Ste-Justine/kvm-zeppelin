@@ -38,6 +38,7 @@ write_files:
       [Install]
       WantedBy=multi-user.target
   #DNS servers containing internal domain names
+%{ if length(nameserver_ips) > 0 ~}
   - path: /opt/dns-servers
     owner: root:root
     permissions: "0444"
@@ -45,6 +46,7 @@ write_files:
 %{ for ip in nameserver_ips ~}
       nameserver ${ip}
 %{ endfor ~}
+%{ endif ~}
   #Zeppelin configuration
   - path: /root/.aws/credentials
     owner: root:root
@@ -278,11 +280,13 @@ packages:
   - openjdk-11-jdk
 runcmd:
   #Add DNS Servers
+%{ if length(nameserver_ips) > 0 ~}
   - systemctl start resolvconf.service
   - systemctl enable resolvconf.service
   - cat /opt/dns-servers >> /etc/resolvconf/resolv.conf.d/tail
   - systemctl restart resolvconf.service
   - resolvconf -u
+%{ endif ~}
   #Add additional CAs
   - chmod +x /opt/setup_additional_cas.sh
   - /opt/setup_additional_cas.sh
