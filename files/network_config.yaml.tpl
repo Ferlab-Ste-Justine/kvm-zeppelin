@@ -1,14 +1,18 @@
 version: 2
 renderer: networkd
 ethernets:
-  eth0:
+%{ for idx, val in macvtap_interfaces ~}
+  eth${idx}:
     dhcp4: no
     match:
-      name: ${interface_name_match}
+      macaddress: ${val.mac}
     addresses:
-      - ${vm_ip}/${subnet_prefix_length}
-    gateway4: ${gateway_ip}
-%{ if length(dns_servers) > 0 ~}
-    nameservers:
-      addresses: [${join(",", dns_servers)}]
+      - ${val.ip}/${val.prefix_length}
+%{ if val.gateway != "" ~}
+    gateway4: ${val.gateway}
 %{ endif ~}
+%{ if length(val.dns_servers) > 0 ~}
+    nameservers:
+      addresses: [${join(",", val.dns_servers)}]
+%{ endif ~}
+%{ endfor ~}
