@@ -60,6 +60,7 @@ write_files:
     permissions: "0444"
     content: |
       export ZEPPELIN_ADDR=0.0.0.0
+      export ZEPPELIN_INTERPRETER_OUTPUT_LIMIT=5120000
       export SPARK_HOME=/opt/spark
   - path: /opt/zeppelin-site.xml
     owner: root:root
@@ -102,7 +103,7 @@ write_files:
           <name>zeppelin.notebook.s3.pathStyleAccess</name>
           <value>true</value>
           <description>Path style access for S3 bucket</description>
-        </property>	
+        </property>
 
         <property>
           <name>zeppelin.notebook.storage</name>
@@ -134,6 +135,7 @@ write_files:
       spark.sql.catalogImplementation               hive
       spark.sql.extensions                          io.delta.sql.DeltaSparkSessionExtension
       spark.sql.catalog.spark_catalog               org.apache.spark.sql.delta.catalog.DeltaCatalog
+      zeppelin.spark.maxResult	                    50000
   #Shiro configuration
   - path: /opt/shiro.ini
     owner: root:root
