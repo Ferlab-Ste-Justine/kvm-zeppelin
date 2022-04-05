@@ -179,6 +179,12 @@ variable "keycloak_client_secret" {
   type = string
 }
 
+variable "keycloak_max_clock_skew" {
+  description = "Keycloak max clock skew in seconds"
+  type = number
+  default = 0
+}
+
 variable "zeppelin_url" {
   description = "Url of zeppelin"
   type = string

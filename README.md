@@ -58,6 +58,7 @@ So instead, we made the tradeof of having a saner zeppelin deployment that runs 
 - **keycloak_realm**: Name of Keycloak realm
 - **keycloak_client_id**: Id of Keycloak client
 - **keycloak_client_secret**: Secret of Keycloak client
+- **keycloak_max_clock_skew**: Max tolerated clock skew with keycloaks in seconds
 - **zeppelin_url**: Url used to access zeppelin
 
 # Usage Example

@@ -51,6 +51,7 @@ data "template_cloudinit_config" "user_data" {
         keycloak_realm = var.keycloak_realm
         keycloak_client_id = var.keycloak_client_id
         keycloak_client_secret = var.keycloak_client_secret
+        keycloak_max_clock_skew = var.keycloak_max_clock_skew
         zeppelin_url = var.zeppelin_url
         additional_certificates = var.additional_certificates
       }

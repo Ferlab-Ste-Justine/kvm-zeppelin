@@ -148,6 +148,9 @@ write_files:
       oidcConfig.scope = openid profile email roles
       oidcConfig.clientAuthenticationMethodAsString = client_secret_basic
       oidcConfig.disablePkce = true
+%{ if keycloak_max_clock_skew > 0 ~}
+      oidcConfig.maxClockSkew = ${keycloak_max_clock_skew}
+%{ endif ~}
 
       authorizationGenerator = bio.ferlab.pac4j.authorization.generator.KeycloakRolesAuthorizationGenerator
       authorizationGenerator.clientId = zeppelin
