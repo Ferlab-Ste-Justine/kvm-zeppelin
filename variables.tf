@@ -179,7 +179,44 @@ variable "keycloak_client_secret" {
   type = string
 }
 
+variable "keycloak_max_clock_skew" {
+  description = "Keycloak max clock skew in seconds"
+  type = number
+  default = 0
+}
+
 variable "zeppelin_url" {
   description = "Url of zeppelin"
   type = string
+}
+
+variable "chrony" {
+  description = "Chrony configuration for ntp. If enabled, chrony is installed and configured, else the default image ntp settings are kept"
+  type        = object({
+    enabled = bool,
+    //https://chrony.tuxfamily.org/doc/4.2/chrony.conf.html#server
+    servers = list(object({
+      url = string,
+      options = list(string)
+    })),
+    //https://chrony.tuxfamily.org/doc/4.2/chrony.conf.html#pool
+    pools = list(object({
+      url = string,
+      options = list(string)
+    })),
+    //https://chrony.tuxfamily.org/doc/4.2/chrony.conf.html#makestep
+    makestep = object({
+      threshold = number,
+      limit = number
+    })
+  })
+  default = {
+    enabled = false
+    servers = []
+    pools = []
+    makestep = {
+      threshold = 0,
+      limit = 0
+    }
+  }
 }
