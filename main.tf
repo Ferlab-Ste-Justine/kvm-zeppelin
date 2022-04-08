@@ -54,6 +54,7 @@ data "template_cloudinit_config" "user_data" {
         keycloak_max_clock_skew = var.keycloak_max_clock_skew
         zeppelin_url = var.zeppelin_url
         additional_certificates = var.additional_certificates
+        chrony = var.chrony
       }
     )
   }
