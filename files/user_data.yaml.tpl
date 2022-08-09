@@ -137,7 +137,7 @@ write_files:
       spark.kubernetes.authenticate.clientCertFile  /opt/k8/k8.crt
       spark.kubernetes.authenticate.clientKeyFile   /opt/k8/k8.key
       spark.jars.repositories                       https://s01.oss.sonatype.org/content/repositories/snapshots,https://s01.oss.sonatype.org/content/repositories/releases
-      spark.jars.packages                           org.apache.hadoop:hadoop-aws:3.3.1,com.amazonaws:aws-java-sdk-bundle:1.11.901,io.delta:delta-core_2.12:1.0.0,io.projectglow:glow-spark3_2.12:1.2.1,bio.ferlab:datalake-spark31_2.12:1.1.0
+      spark.jars.packages                           org.apache.hadoop:hadoop-aws:3.3.1,com.amazonaws:aws-java-sdk-bundle:1.11.901,io.delta:delta-core_2.12:1.0.0,io.projectglow:glow-spark3_2.12:1.2.1,bio.ferlab:datalake-spark3_2.12:1.1.0
       spark.jars.excludes                           org.apache.hadoop:hadoop-client
       SPARK_HOME                                    /opt/spark
       spark.hadoop.fs.s3a.impl                      org.apache.hadoop.fs.s3a.S3AFileSystem
