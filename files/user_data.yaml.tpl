@@ -286,11 +286,10 @@ write_files:
       After=syslog.target network.target
 
       [Service]
-      Type=simple
-      Restart=always
-      RestartSec=1
+      Type=oneshot
       ExecStart=/opt/zeppelin/bin/zeppelin-daemon.sh start
       ExecStop=/opt/zeppelin/bin/zeppelin-daemon.sh stop
+      RemainAfterExit=yes
 
       [Install]
       WantedBy=multi-user.target
