@@ -54,8 +54,7 @@ So instead, we made the tradeof of having a saner zeppelin deployment that runs 
 - **hive_metastore_url**: Url of the hive metastore that zeppelin will use.
 - **spark_sql_warehouse_dir**: S3 path of the spark sql warehouse
 - **notebook_s3_bucket**: S3 bucket under which zeppelin will store its notebooks
-- **keycloak_url**: Url of Keycloak server
-- **keycloak_realm**: Name of Keycloak realm
+- **keycloak_discovery_url**: Url discovery of Keycloak server
 - **keycloak_client_id**: Id of Keycloak client
 - **keycloak_client_secret**: Secret of Keycloak client
 - **keycloak_max_clock_skew**: Max tolerated clock skew with keycloaks in seconds

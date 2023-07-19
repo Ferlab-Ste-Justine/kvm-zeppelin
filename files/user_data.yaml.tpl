@@ -160,7 +160,7 @@ write_files:
       [main]
       oidcConfig = org.pac4j.oidc.config.OidcConfiguration
       oidcConfig.withState = false
-      oidcConfig.discoveryURI = ${keycloak_url}/auth/realms/${keycloak_realm}/.well-known/openid-configuration
+      oidcConfig.discoveryURI = ${keycloak_discovery_url}
       oidcConfig.clientId = ${keycloak_client_id}
       oidcConfig.secret = ${keycloak_client_secret}
       oidcConfig.scope = openid profile email roles

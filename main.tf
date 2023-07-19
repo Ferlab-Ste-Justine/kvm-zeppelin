@@ -47,8 +47,7 @@ data "template_cloudinit_config" "user_data" {
         k8_client_private_key = var.k8_client_private_key
         k8_ca_certificate = var.k8_ca_certificate
         k8_executor_image = var.k8_executor_image
-        keycloak_url = var.keycloak_url
-        keycloak_realm = var.keycloak_realm
+        keycloak_discovery_url = var.keycloak_discovery_url
         keycloak_client_id = var.keycloak_client_id
         keycloak_client_secret = var.keycloak_client_secret
         keycloak_max_clock_skew = var.keycloak_max_clock_skew

@@ -159,13 +159,8 @@ variable "additional_certificates" {
   default = []
 }
 
-variable "keycloak_url" {
-  description = "Url of Keycloak server"
-  type = string
-}
-
-variable "keycloak_realm" {
-  description = "Name of Keycloak realm"
+variable "keycloak_discovery_url" {
+  description = "Url discovery of Keycloak server"
   type = string
 }
 
