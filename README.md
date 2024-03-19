@@ -1,6 +1,6 @@
 # About
 
-This terraform module will provision a zeppelin vm in openstack.
+This terraform module will provision a zeppelin vm in libvirt/kvm.
 
 The zeppelin server provisioned has the following characteristics:
 - It provisions executors in a kubernetes cluster
