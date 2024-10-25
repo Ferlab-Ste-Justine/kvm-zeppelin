@@ -41,6 +41,7 @@ So instead, we made the tradeof of having a saner zeppelin deployment that runs 
 - **admin_user_password**: Optional password for the default sudo user of the image. Note that this will not enable ssh password connections, but it will allow you to log into the vm from the host using the **virsh console** command.
 - **ssh_admin_public_key**: Public part of the ssh key the admin will be able to login as
 - **nameserver_ips**: Ips of nameservers that will be added to the list of nameservers the zeppelin server refers to to resolve domain names.
+- **zeppelin_version**: Version of Zeppelin. Defaults to **0.11.2**.
 - **zeppelin_mirror**: Mirror to download zeppelin from. Defaults to the university of Waterloo.
 - **k8_executor_image**: Image to use to launch executor containers in kubernetes. Defaults to **chusj/spark:7508c20ef44952f1ee2af91a26822b6efc10998f**
 - **k8_api_endpoint**: Kubernetes api endpoint that zeppelin will use to provision executors on kubernetes.

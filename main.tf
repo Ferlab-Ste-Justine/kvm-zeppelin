@@ -41,6 +41,7 @@ data "template_cloudinit_config" "user_data" {
         hive_metastore_port = var.hive_metastore_port
         hive_metastore_url = var.hive_metastore_url
         spark_sql_warehouse_dir = var.spark_sql_warehouse_dir
+        zeppelin_version = var.zeppelin_version
         zeppelin_mirror = var.zeppelin_mirror
         k8_api_endpoint = var.k8_api_endpoint
         k8_client_certificate = var.k8_client_certificate
