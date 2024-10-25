@@ -86,10 +86,16 @@ variable "nameserver_ips" {
   default = []
 }
 
+variable "zeppelin_version" {
+  description = "Version of zeppelin"
+  type        = string
+  default     = "0.11.2"
+}
+
 variable "zeppelin_mirror" {
   description = "Mirror from which to download zeppelin"
   type = string
-  default = "https://mirror.csclub.uwaterloo.ca"
+  default = "https://dlcdn.apache.org"
 }
 
 variable "k8_executor_image" {

@@ -328,11 +328,11 @@ runcmd:
   - cp /opt/spark-defaults.conf /opt/spark/conf/spark-defaults.conf
   #Install Zeppelin
   - cd /opt
-  - wget ${zeppelin_mirror}/apache/zeppelin/zeppelin-0.10.0/zeppelin-0.10.0-bin-netinst.tgz
-  - tar xvzf zeppelin-0.10.0-bin-netinst.tgz
-  - mv zeppelin-0.10.0-bin-netinst zeppelin
-  - rm zeppelin-0.10.0-bin-netinst.tgz
-  - wget https://github.com/Ferlab-Ste-Justine/zeppelin-oidc/releases/download/v0.1.0/zeppelin-oidc-jar-with-dependencies.jar
+  - wget ${zeppelin_mirror}/zeppelin/zeppelin-${zeppelin_version}/zeppelin-${zeppelin_version}-bin-netinst.tgz
+  - tar xvzf zeppelin-${zeppelin_version}-bin-netinst.tgz
+  - mv zeppelin-${zeppelin_version}-bin-netinst zeppelin
+  - rm zeppelin-${zeppelin_version}-bin-netinst.tgz
+  - wget https://github.com/Ferlab-Ste-Justine/zeppelin-oidc/releases/download/v0.2.0/zeppelin-oidc-jar-with-dependencies.jar
   - rm -rf /opt/zeppelin/lib/*
   - mv zeppelin-oidc-jar-with-dependencies.jar /opt/zeppelin/lib/
   - cp /opt/zeppelin-env.sh /opt/zeppelin/conf/zeppelin-env.sh
