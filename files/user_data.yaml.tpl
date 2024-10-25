@@ -332,7 +332,7 @@ runcmd:
   - tar xvzf zeppelin-${zeppelin_version}-bin-netinst.tgz
   - mv zeppelin-${zeppelin_version}-bin-netinst zeppelin
   - rm zeppelin-${zeppelin_version}-bin-netinst.tgz
-  - wget https://github.com/Ferlab-Ste-Justine/zeppelin-oidc/releases/download/v0.2.0/zeppelin-oidc-jar-with-dependencies.jar
+  - wget https://github.com/Ferlab-Ste-Justine/zeppelin-oidc/releases/download/v0.1.0/zeppelin-oidc-jar-with-dependencies.jar
   - rm -rf /opt/zeppelin/lib/*
   - mv zeppelin-oidc-jar-with-dependencies.jar /opt/zeppelin/lib/
   - cp /opt/zeppelin-env.sh /opt/zeppelin/conf/zeppelin-env.sh
