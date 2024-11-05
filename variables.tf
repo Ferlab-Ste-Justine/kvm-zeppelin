@@ -40,13 +40,13 @@ variable "mac" {
 
 variable "macvtap_interfaces" {
   description = "List of macvtap interfaces. Mutually exclusive with the network_id, ip and mac fields. Each entry has the following keys: interface, prefix_length, ip, mac, gateway and dns_servers"
-  type        = list(object({
-    interface = string,
+  type = list(object({
+    interface     = string,
     prefix_length = number,
-    ip = string,
-    mac = string,
-    gateway = string,
-    dns_servers = list(string),
+    ip            = string,
+    mac           = string,
+    gateway       = string,
+    dns_servers   = list(string),
   }))
   default = []
 }
@@ -59,16 +59,16 @@ variable "cloud_init_volume_pool" {
 variable "cloud_init_volume_name" {
   description = "Name of the cloud init volume"
   type        = string
-  default = ""
+  default     = ""
 }
 
-variable "ssh_admin_user" { 
+variable "ssh_admin_user" {
   description = "Pre-existing ssh admin user of the image"
   type        = string
   default     = "ubuntu"
 }
 
-variable "admin_user_password" { 
+variable "admin_user_password" {
   description = "Optional password for admin user"
   type        = string
   sensitive   = true
@@ -82,8 +82,8 @@ variable "ssh_admin_public_key" {
 
 variable "nameserver_ips" {
   description = "Ips of the nameservers"
-  type = list(string)
-  default = []
+  type        = list(string)
+  default     = []
 }
 
 variable "zeppelin_version" {
@@ -94,130 +94,135 @@ variable "zeppelin_version" {
 
 variable "zeppelin_mirror" {
   description = "Mirror from which to download zeppelin"
-  type = string
-  default = "https://dlcdn.apache.org"
+  type        = string
+  default     = "https://dlcdn.apache.org"
 }
 
 variable "k8_executor_image" {
   description = "Image to launch k8 executor from"
-  type = string
-  default = "chusj/spark:7508c20ef44952f1ee2af91a26822b6efc10998f"
+  type        = string
+  default     = "chusj/spark:7508c20ef44952f1ee2af91a26822b6efc10998f"
 }
 
 variable "k8_api_endpoint" {
   description = "Endpoint to access the k8 masters"
-  type = string
+  type        = string
 }
 
 variable "k8_ca_certificate" {
   description = "CA certicate of kubernetes api"
-  type = string
+  type        = string
 }
 
 variable "k8_client_certificate" {
   description = "Client certicate to access kubernetes api"
-  type = string
+  type        = string
 }
 
 variable "k8_client_private_key" {
   description = "Client private key to access kubernetes api"
-  type = string
+  type        = string
 }
 
 variable "s3_access" {
   description = "S3 access key"
-  type = string
+  type        = string
 }
 
 variable "s3_secret" {
   description = "S3 secret key"
-  type = string
+  type        = string
 }
 
 variable "s3_url" {
   description = "url of the S3 store"
-  type = string
+  type        = string
 }
 
 variable "hive_metastore_port" {
   description = "Port of the hive metastore on the kubernetes cluster"
-  type = number
+  type        = number
+  default     = null
 }
 
 variable "hive_metastore_url" {
   description = "Url of the hive metastore"
-  type = string
+  type        = string
+  default     = ""
 }
 
 variable "spark_sql_warehouse_dir" {
   description = "S3 path of the spark sql warehouse"
-  type = string
+  type        = string
 }
 
 variable "notebook_s3_bucket" {
   description = "S3 bucket to store notebooks under"
-  type = string
+  type        = string
 }
 
 variable "additional_certificates" {
   description = "Additional list of certificates to install on the system. Useful if your keycloak or s3 store having certificates signed by an internal CA for example."
-  type = list(string)
-  default = []
+  type        = list(string)
+  default     = []
 }
 
 variable "keycloak_discovery_url" {
   description = "Url discovery of Keycloak server"
-  type = string
+  type        = string
+  default     = ""
 }
 
 variable "keycloak_client_id" {
   description = "Id of Keycloak client"
-  type = string
+  type        = string
+  default     = ""
 }
 
 variable "keycloak_client_secret" {
   description = "Secret of Keycloak client"
-  type = string
+  type        = string
+  default     = ""
 }
 
 variable "keycloak_max_clock_skew" {
   description = "Keycloak max clock skew in seconds"
-  type = number
-  default = 0
+  type        = number
+  default     = 0
 }
 
 variable "zeppelin_url" {
   description = "Url of zeppelin"
-  type = string
+  type        = string
 }
 
 variable "chrony" {
   description = "Chrony configuration for ntp. If enabled, chrony is installed and configured, else the default image ntp settings are kept"
-  type        = object({
+  type = object({
     enabled = bool,
     //https://chrony.tuxfamily.org/doc/4.2/chrony.conf.html#server
     servers = list(object({
-      url = string,
+      url     = string,
       options = list(string)
     })),
     //https://chrony.tuxfamily.org/doc/4.2/chrony.conf.html#pool
     pools = list(object({
-      url = string,
+      url     = string,
       options = list(string)
     })),
     //https://chrony.tuxfamily.org/doc/4.2/chrony.conf.html#makestep
     makestep = object({
       threshold = number,
-      limit = number
+      limit     = number
     })
   })
   default = {
     enabled = false
     servers = []
-    pools = []
+    pools   = []
     makestep = {
       threshold = 0,
-      limit = 0
+      limit     = 0
     }
   }
 }
