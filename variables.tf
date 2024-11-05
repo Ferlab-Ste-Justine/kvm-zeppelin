@@ -167,33 +167,26 @@ variable "additional_certificates" {
   default     = []
 }
 
-variable "keycloak_discovery_url" {
-  description = "Url discovery of Keycloak server"
-  type        = string
-  default     = ""
-}
-
-variable "keycloak_client_id" {
-  description = "Id of Keycloak client"
-  type        = string
-  default     = ""
-}
-
-variable "keycloak_client_secret" {
-  description = "Secret of Keycloak client"
-  type        = string
-  default     = ""
-}
-
-variable "keycloak_max_clock_skew" {
-  description = "Keycloak max clock skew in seconds"
-  type        = number
-  default     = 0
-}
-
-variable "zeppelin_url" {
-  description = "Url of zeppelin"
-  type        = string
+variable "keycloak" {
+  description = "Keycloak configuration for user authentication"
+  type = object({
+    enabled       = bool
+    url           = string
+    realm         = string
+    client_id     = string
+    client_secret = string
+    zeppelin_url  = string
+    max_clock_skew = number
+  })
+  default = {
+    enabled       = false
+    url           = ""
+    realm         = ""
+    client_id     = ""
+    client_secret = ""
+    zeppelin_url  = ""
+    max_clock_skew = 0
+  }
 }
 
 variable "chrony" {

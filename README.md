@@ -9,7 +9,7 @@ The zeppelin server provisioned has the following characteristics:
 - It uses spark 3 in scala
 - It saves its notebooks in s3
 - It expects to communicate with a group of kubernetes workers to access the hive metastore and it expects its client traffic to originate from the kubernetes cluster's workers (probably via an ingress solution)
-- It uses keycloak for user authentication
+- Can use Keycloak for user authentication (with Shiro).
 
 # Motivation
 
@@ -55,11 +55,14 @@ So instead, we made the tradeof of having a saner zeppelin deployment that runs 
 - **hive_metastore_url**: Url of the hive metastore that zeppelin will use.
 - **spark_sql_warehouse_dir**: S3 path of the spark sql warehouse
 - **notebook_s3_bucket**: S3 bucket under which zeppelin will store its notebooks
-- **keycloak_discovery_url**: Url discovery of Keycloak server
-- **keycloak_client_id**: Id of Keycloak client
-- **keycloak_client_secret**: Secret of Keycloak client
-- **keycloak_max_clock_skew**: Max tolerated clock skew with keycloaks in seconds
-- **zeppelin_url**: Url used to access zeppelin
+- **keycloak**: Keycloak configuration for user authentication.
+  - **enabled**: If set to true, keycloak will be installed and configured.
+  - **url**: Url of the keycloak server.
+  - **realm**: Realm of the keycloak server.
+  - **client_id**: Id of the keycloak client.
+  - **client_secret**: Secret of the keycloak client.
+  - **zeppelin_url**: Url of zeppelin.
+  - **max_clock_skew**: Max tolerated clock skew with keycloaks in seconds.
 - **chrony**: Optional chrony configuration for when you need a more fine-grained ntp setup on your vm. It is an object with the following fields:
   - **enabled**: If set the false (the default), chrony will not be installed and the vm ntp settings will be left to default.
   - **servers**: List of ntp servers to sync from with each entry containing two properties, **url** and **options** (see: https://chrony.tuxfamily.org/doc/4.2/chrony.conf.html#server)

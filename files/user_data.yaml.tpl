@@ -152,6 +152,7 @@ write_files:
       spark.sql.catalogImplementation               hive
       spark.sql.extensions                          io.delta.sql.DeltaSparkSessionExtension
       spark.sql.catalog.spark_catalog               org.apache.spark.sql.delta.catalog.DeltaCatalog
+%{ if keycloak.enabled ~}
   #Shiro configuration
   - path: /opt/shiro.ini
     owner: root:root
@@ -160,14 +161,14 @@ write_files:
       [main]
       oidcConfig = org.pac4j.oidc.config.OidcConfiguration
       oidcConfig.withState = false
-      oidcConfig.discoveryURI = ${keycloak_discovery_url}
-      oidcConfig.clientId = ${keycloak_client_id}
-      oidcConfig.secret = ${keycloak_client_secret}
+      oidcConfig.discoveryURI = ${keycloak.url}/auth/realms/${keycloak.realm}/.well-known/openid-configuration
+      oidcConfig.clientId = ${keycloak.client_id}
+      oidcConfig.secret = ${keycloak.client_secret}
       oidcConfig.scope = openid profile email roles
       oidcConfig.clientAuthenticationMethodAsString = client_secret_basic
       oidcConfig.disablePkce = true
-%{ if keycloak_max_clock_skew > 0 ~}
-      oidcConfig.maxClockSkew = ${keycloak_max_clock_skew}
+%{ if keycloak.max_clock_skew > 0 ~}
+      oidcConfig.maxClockSkew = ${keycloak.max_clock_skew}
 %{ endif ~}
 
       authorizationGenerator = bio.ferlab.pac4j.authorization.generator.KeycloakRolesAuthorizationGenerator
@@ -179,7 +180,7 @@ write_files:
       oidcClient = org.pac4j.oidc.client.OidcClient
       oidcClient.configuration = $oidcConfig
       oidcClient.ajaxRequestResolver = $ajaxRequestResolver
-      oidcClient.callbackUrl = ${zeppelin_url}/api/callback/
+      oidcClient.callbackUrl = ${keycloak.zeppelin_url}/api/callback/
       oidcClient.ajaxRequestResolver = $ajaxRequestResolver
       oidcClient.authorizationGenerators = $authorizationGenerator
 
@@ -207,7 +208,7 @@ write_files:
       customCallbackLogic = bio.ferlab.pac4j.ForceDefaultURLCallbackLogic
 
       callbackFilter = io.buji.pac4j.filter.CallbackFilter
-      callbackFilter.defaultUrl = ${zeppelin_url}
+      callbackFilter.defaultUrl = ${keycloak.zeppelin_url}
       callbackFilter.config = $config
       callbackFilter.callbackLogic = $customCallbackLogic
 
@@ -234,6 +235,8 @@ write_files:
       /api/configurations/** = oidcSecurityFilter, roles[clin_administrator]
       /api/credential/** = oidcSecurityFilter, roles[clin_administrator]
       /** = oidcSecurityFilter
+%{ endif ~}
+
   #Kubernetes Certificates
   - path: /opt/k8/ca.crt
     owner: root:root
