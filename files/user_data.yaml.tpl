@@ -78,7 +78,7 @@ write_files:
       export ZEPPELIN_ADDR=0.0.0.0
       export SPARK_HOME=/opt/spark
       export AWS_ACCESS_KEY_ID=${s3_access}
-      export AWS_SECRET_ACCESS_KEY=${s3_secret}
+      export AWS_SECRET_ACCESS_KEY='${s3_secret}'
   - path: /opt/zeppelin-site.xml
     owner: root:root
     permissions: "0400"
@@ -141,8 +141,7 @@ write_files:
       spark.kubernetes.authenticate.driver.serviceAccountName  ${k8_service_account_name}
       spark.kubernetes.namespace                    ${k8_namespace}
       spark.kubernetes.executor.secretKeyRef.AWS_ACCESS_KEY_ID  ${k8_secret_s3}:${k8_secret_s3_access_key}
-      spark.kubernetes.executor.secretKeyRef.AWS_SECRET_ACCESS_KEY  ${k8_secret_s3}:${k8_secret_s3_secret_key} 
-      spark.jars.repositories                       https://s01.oss.sonatype.org/content/repositories/snapshots,https://s01.oss.sonatype.org/content/repositories/releases
+      spark.kubernetes.executor.secretKeyRef.AWS_SECRET_ACCESS_KEY  ${k8_secret_s3}:${k8_secret_s3_secret_key}      
       spark.jars.packages                           org.apache.hadoop:hadoop-aws:3.3.4,io.delta:delta-spark_2.12:3.1.0,io.projectglow:glow-spark3_2.12:2.0.0,bio.ferlab:datalake-spark3_2.12:14.0.0
       spark.jars.excludes                           org.apache.hadoop:hadoop-client,io.netty:netty-all,io.netty:netty-handler,io.netty:netty-transport-native-epoll
       SPARK_HOME                                    /opt/spark
@@ -151,8 +150,6 @@ write_files:
       spark.hadoop.fs.s3a.connection.ssl.enabled    true
       spark.hadoop.fs.s3a.path.style.access         true
       spark.sql.warehouse.dir                       s3a://${spark_sql_warehouse_dir}
-      spark.hadoop.fs.s3a.access.key                ${s3_access}
-      spark.hadoop.fs.s3a.secret.key                ${s3_secret}
       spark.hadoop.fs.s3a.aws.credentials.provider  com.amazonaws.auth.EnvironmentVariableCredentialsProvider
       spark.hadoop.fs.s3a.endpoint                  https://${s3_url}
       spark.hadoop.hive.metastore.uris              thrift://${hive_metastore_url}
@@ -183,9 +180,6 @@ write_files:
       oidcConfig.scope = openid profile email roles
       oidcConfig.clientAuthenticationMethodAsString = client_secret_basic
       oidcConfig.disablePkce = true
-%{ if keycloak.max_clock_skew > 0 ~}
-      oidcConfig.maxClockSkew = ${keycloak.max_clock_skew}
-%{ endif ~}
 
       authorizationGenerator = bio.ferlab.pac4j.authorization.generator.KeycloakRolesAuthorizationGenerator
       authorizationGenerator.clientId = zeppelin
@@ -356,9 +350,6 @@ runcmd:
   - tar xvzf zeppelin-${zeppelin_version}-bin-netinst.tgz --exclude='._*'
   - mv zeppelin-${zeppelin_version}-bin-netinst zeppelin
   - rm zeppelin-${zeppelin_version}-bin-netinst.tgz
-  - wget https://github.com/Ferlab-Ste-Justine/zeppelin-oidc/releases/download/v0.1.0/zeppelin-oidc-jar-with-dependencies.jar
-  - rm -rf /opt/zeppelin/lib/*
-  - mv zeppelin-oidc-jar-with-dependencies.jar /opt/zeppelin/lib/
 %{ if keycloak.enabled ~}
   - wget https://github.com/Ferlab-Ste-Justine/zeppelin-oidc/releases/download/v0.2.0/zeppelin-oidc-jar-with-dependencies.jar
   - rm -rf /opt/zeppelin/lib/*
