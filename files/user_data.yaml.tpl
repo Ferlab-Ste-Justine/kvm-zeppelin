@@ -136,6 +136,10 @@ write_files:
       spark.kubernetes.authenticate.caCertFile      /opt/k8/ca.crt
       spark.kubernetes.authenticate.clientCertFile  /opt/k8/k8.crt
       spark.kubernetes.authenticate.clientKeyFile   /opt/k8/k8.key
+      spark.kubernetes.authenticate.driver.serviceAccountName  ${k8_service_account_name}
+      spark.kubernetes.namespace                    ${k8_namespace}
+      spark.kubernetes.executor.secretKeyRef.AWS_ACCESS_KEY_ID  ${k8_secret_s3}:${k8_secret_s3_access_key}
+      spark.kubernetes.executor.secretKeyRef.AWS_SECRET_ACCESS_KEY  ${k8_secret_s3}:${k8_secret_s3_secret_key}   
       spark.jars.repositories                       https://s01.oss.sonatype.org/content/repositories/snapshots,https://s01.oss.sonatype.org/content/repositories/releases
       spark.jars.packages                           org.apache.hadoop:hadoop-aws:3.3.1,com.amazonaws:aws-java-sdk-bundle:1.11.901,io.delta:delta-core_2.12:1.0.0,io.projectglow:glow-spark3_2.12:1.2.1,bio.ferlab:datalake-spark3_2.12:1.1.0
       spark.jars.excludes                           org.apache.hadoop:hadoop-client
@@ -150,8 +154,17 @@ write_files:
       spark.hadoop.fs.s3a.endpoint                  https://${s3_url}
       spark.hadoop.hive.metastore.uris              thrift://${hive_metastore_url}
       spark.sql.catalogImplementation               hive
+      spark.driver.extraJavaOptions                 "-Divy.cache.dir=/tmp -Divy.home=/tmp"
+      spark.executor.extraJavaOptions               "-Divy.cache.dir=/tmp -Divy.home=/tmp"
       spark.sql.extensions                          io.delta.sql.DeltaSparkSessionExtension
       spark.sql.catalog.spark_catalog               org.apache.spark.sql.delta.catalog.DeltaCatalog
+      spark.dynamicAllocation.enabled               ${spark_dynamic_allocation_enabled}
+      spark.dynamicAllocation.shuffleTracking.enabled ${spark_dynamic_allocation_enabled}
+      spark.dynamicAllocation.maxExecutors          ${spark_max_executors}
+      spark.dynamicAllocation.minExecutors          ${spark_min_executors}
+      spark.dynamicAllocation.shuffleTracking.timeout 60s
+      spark.network.crypto.enabled                  true
+      spark.authenticate                            true
 %{ if keycloak.enabled ~}
   #Shiro configuration
   - path: /opt/shiro.ini
@@ -324,10 +337,15 @@ runcmd:
   - /opt/setup_additional_cas.sh
   #Install Spark
   - cd /opt
-  - wget https://github.com/Ferlab-Ste-Justine/spark-images/releases/download/v3.1.2/spark-3.1.2-bin-hadoop-3.3.1.tgz
-  - tar xzf spark-3.1.2-bin-hadoop-3.3.1.tgz
-  - mv spark-3.1.2-bin-hadoop-3.3.1 spark
-  - rm spark-3.1.2-bin-hadoop-3.3.1.tgz
+  - |
+      wget ${spark_mirror}/spark/spark-${spark_version}/spark-${spark_version}-bin-hadoop3.tgz -O spark-${spark_version}-bin-hadoop3.tgz
+      if [ $? -ne 0 ]; then
+          echo "Failed to download Spark from ${spark_mirror}. Exiting installation."
+          exit 1
+      fi
+  - tar xzf spark-${spark_version}-bin-hadoop3.tgz
+  - mv spark-${spark_version}-bin-hadoop3 spark
+  - rm spark-${spark_version}-bin-hadoop3.tgz
   - cp /opt/spark-defaults.conf /opt/spark/conf/spark-defaults.conf
   #Install Zeppelin
   - cd /opt
@@ -338,9 +356,14 @@ runcmd:
   - wget https://github.com/Ferlab-Ste-Justine/zeppelin-oidc/releases/download/v0.1.0/zeppelin-oidc-jar-with-dependencies.jar
   - rm -rf /opt/zeppelin/lib/*
   - mv zeppelin-oidc-jar-with-dependencies.jar /opt/zeppelin/lib/
+%{ if keycloak.enabled ~}
+  - wget https://github.com/Ferlab-Ste-Justine/zeppelin-oidc/releases/download/v0.2.0/zeppelin-oidc-jar-with-dependencies.jar
+  - rm -rf /opt/zeppelin/lib/*
+  - mv zeppelin-oidc-jar-with-dependencies.jar /opt/zeppelin/lib/
+  - cp /opt/shiro.ini /opt/zeppelin/conf/shiro.ini
+%{ endif ~}
   - cp /opt/zeppelin-env.sh /opt/zeppelin/conf/zeppelin-env.sh
   - cp /opt/zeppelin-site.xml /opt/zeppelin/conf/zeppelin-site.xml
-  - cp /opt/shiro.ini /opt/zeppelin/conf/shiro.ini
   - systemctl enable zeppelin
   - systemctl start zeppelin
   #Install prometheus node exporter as a binary managed as a systemd service

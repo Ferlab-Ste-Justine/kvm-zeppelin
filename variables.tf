@@ -104,6 +104,16 @@ variable "k8_executor_image" {
   default     = "chusj/spark:7508c20ef44952f1ee2af91a26822b6efc10998f"
 }
 
+variable "k8_service_account_name" {
+  description = "Service account name to use"
+  type        = string
+}
+
+variable "k8_namespace" {
+  description = "Namespace to use"
+  type        = string
+}
+
 variable "k8_api_endpoint" {
   description = "Endpoint to access the k8 masters"
   type        = string
@@ -121,6 +131,21 @@ variable "k8_client_certificate" {
 
 variable "k8_client_private_key" {
   description = "Client private key to access kubernetes api"
+  type        = string
+}
+
+variable "k8_secret_s3" {
+  description = "Name of kubernetes secret to use for S3 credentials for executors pods"
+  type        = string
+}
+
+variable "k8_secret_s3_access_key" {
+  description = "Key in k8_secret_s3 secret which contains the S3 access key"
+  type        = string
+}
+
+variable "k8_secret_s3_secret_key" {
+  description = "Key in k8_secret_s3 secret which contains the S3 secret key"
   type        = string
 }
 
@@ -156,6 +181,36 @@ variable "spark_sql_warehouse_dir" {
   type        = string
 }
 
+variable "spark_dynamic_allocation_enabled" {
+  description = "Enable dynamic allocation of spark executors"
+  type        = bool
+  default     = true
+}
+
+variable "spark_max_executors" {
+  description = "Number maximum of spark executors"
+  type        = number
+  default     = 15
+}
+
+variable "spark_min_executors" {
+  description = "Number minimum of spark executors"
+  type        = number
+  default     = 0
+}
+
+variable "spark_version" {
+  description = "Version of spark"
+  type        = string
+  default     = "3.5.2"
+}
+
+variable "spark_mirror" {
+  description = "Mirror from which to download spark"
+  type        = string
+  default     = "https://archive.apache.org/dist"
+}
+
 variable "notebook_s3_bucket" {
   description = "S3 bucket to store notebooks under"
   type        = string
@@ -170,21 +225,21 @@ variable "additional_certificates" {
 variable "keycloak" {
   description = "Keycloak configuration for user authentication"
   type = object({
-    enabled       = bool
-    url           = string
-    realm         = string
-    client_id     = string
-    client_secret = string
-    zeppelin_url  = string
+    enabled        = bool
+    url            = string
+    realm          = string
+    client_id      = string
+    client_secret  = string
+    zeppelin_url   = string
     max_clock_skew = number
   })
   default = {
-    enabled       = false
-    url           = ""
-    realm         = ""
-    client_id     = ""
-    client_secret = ""
-    zeppelin_url  = ""
+    enabled        = false
+    url            = ""
+    realm          = ""
+    client_id      = ""
+    client_secret  = ""
+    zeppelin_url   = ""
     max_clock_skew = 0
   }
 }

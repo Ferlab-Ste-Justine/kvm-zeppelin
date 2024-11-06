@@ -29,28 +29,38 @@ data "template_cloudinit_config" "user_data" {
     content = templatefile(
       "${path.module}/files/user_data.yaml.tpl",
       {
-        node_name               = var.name
-        ssh_admin_public_key    = var.ssh_admin_public_key
-        ssh_admin_user          = var.ssh_admin_user
-        admin_user_password     = var.admin_user_password
-        nameserver_ips          = var.nameserver_ips
-        s3_access               = var.s3_access
-        s3_secret               = var.s3_secret
-        s3_url                  = var.s3_url
-        notebook_s3_bucket      = var.notebook_s3_bucket
-        hive_metastore_port     = var.hive_metastore_port
-        hive_metastore_url      = var.hive_metastore_url
-        spark_sql_warehouse_dir = var.spark_sql_warehouse_dir
-        zeppelin_version        = var.zeppelin_version
-        zeppelin_mirror         = var.zeppelin_mirror
-        k8_api_endpoint         = var.k8_api_endpoint
-        k8_client_certificate   = var.k8_client_certificate
-        k8_client_private_key   = var.k8_client_private_key
-        k8_ca_certificate       = var.k8_ca_certificate
-        k8_executor_image       = var.k8_executor_image
-        keycloak                = var.keycloak
-        additional_certificates = var.additional_certificates
-        chrony                  = var.chrony
+        node_name                        = var.name
+        ssh_admin_public_key             = var.ssh_admin_public_key
+        ssh_admin_user                   = var.ssh_admin_user
+        admin_user_password              = var.admin_user_password
+        nameserver_ips                   = var.nameserver_ips
+        s3_access                        = var.s3_access
+        s3_secret                        = var.s3_secret
+        s3_url                           = var.s3_url
+        notebook_s3_bucket               = var.notebook_s3_bucket
+        hive_metastore_port              = var.hive_metastore_port
+        hive_metastore_url               = var.hive_metastore_url
+        spark_sql_warehouse_dir          = var.spark_sql_warehouse_dir
+        zeppelin_version                 = var.zeppelin_version
+        zeppelin_mirror                  = var.zeppelin_mirror
+        k8_api_endpoint                  = var.k8_api_endpoint
+        k8_client_certificate            = var.k8_client_certificate
+        k8_client_private_key            = var.k8_client_private_key
+        k8_ca_certificate                = var.k8_ca_certificate
+        k8_executor_image                = var.k8_executor_image
+        keycloak                         = var.keycloak
+        k8_service_account_name          = var.k8_service_account_name
+        k8_namespace                     = var.k8_namespace
+        k8_secret_s3                     = var.k8_secret_s3
+        k8_secret_s3_access_key          = var.k8_secret_s3_access_key
+        k8_secret_s3_secret_key          = var.k8_secret_s3_secret_key
+        spark_dynamic_allocation_enabled = var.spark_dynamic_allocation_enabled
+        spark_max_executors              = var.spark_max_executors
+        spark_min_executors              = var.spark_min_executors
+        spark_version                    = var.spark_version
+        spark_mirror                     = var.spark_mirror
+        additional_certificates          = var.additional_certificates
+        chrony                           = var.chrony
       }
     )
   }
